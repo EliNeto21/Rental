@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Entities;
-using Services.MotorcycleService;
 using Services.IMotorcycleService;
 
 namespace WsRental.Controllers.v1
@@ -71,16 +70,30 @@ namespace WsRental.Controllers.v1
 
         [HttpPut("{id:guid}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Motorcycle>> UpdateMotorcycleAsync([FromHeader] string plate, Guid id)
+        public async Task<ActionResult<GenericResult<dynamic>>> UpdateMotorcycleAsync([FromHeader] string plate, Guid id)
         {
-            return Ok();
+            var result = await _motorcycleService.UpdatePlateAsync(id, plate, CancellationToken.None);
+
+            if (result.Code > 200)
+            {
+                return BadRequest(result.Mensagem);
+            }
+
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]
         [AllowAnonymous]
-        public async Task<ActionResult> DeleteMotorcycleAsync(Guid id)
+        public async Task<ActionResult<GenericResult<dynamic>>> DeleteMotorcycleAsync(Guid id)
         {
-            return Ok();
+            var result = await _motorcycleService.DeleteAsync(id, CancellationToken.None);
+
+            if (result.Code > 200)
+            {
+                return BadRequest(result.Mensagem);
+            }
+
+            return Ok(result);
         }
     }
 }

@@ -10,8 +10,17 @@
         public string? CnhImageUrl { get; private set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
-        public bool CanRentMotorcycle() => CnhType is "A" or "A+B";
+        public bool CanRentMotorcycle() => CnhType.ToUpper() is "A" or "A+B";
 
         public void SetCnhImage(string url) => CnhImageUrl = url;
+
+        public Courier(DateOnly birthDate, string name, string cnhNumber, string cnhType, string cnpj)
+        {
+            Name = name;
+            Cnpj = cnpj;
+            BirthDate = birthDate;
+            CnhNumber = cnhNumber;
+            CnhType = cnhType;
+        }
     }
 }

@@ -21,11 +21,16 @@ namespace WsRental.Controllers.v1
         [HttpPost("")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(CourierViewModel), StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenericResult<Courier>>> InsertCourierAsync([FromBody] Courier courier)
+        public async Task<ActionResult<GenericResult<Courier>>> InsertCourierAsync([FromBody] CourierViewModel courier)
         {
             var result = await _courierService.RegisterAsync(courier, CancellationToken.None);
 
-            return Ok();
+            if (result.Code > 200)
+            {
+                return BadRequest(result.Mensagem);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("{courierId}/cnh-image")]

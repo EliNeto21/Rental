@@ -13,24 +13,31 @@ namespace Services.CourierService
             _repository = repository;
         }
 
-        public async Task<GenericResult<Courier>> RegisterAsync(Courier courier, CancellationToken ct)
+        public async Task<GenericResult<Courier>> RegisterAsync(CourierViewModel courierModel, CancellationToken ct)
         {
             try
             {
-                if (!new[] { "A", "B", "A+B" }.Contains(courier.CnhType))
+                if (!new[] { "A", "B", "A+B" }.Contains(courierModel.CnhType.ToUpper()))
                 {
                     throw new InvalidOperationException("Invalid CNH type");
                 }
 
-                if (await _repository.CnpjExistsAsync(courier.Cnpj, ct))
+                if (await _repository.CnpjExistsAsync(courierModel.Cnpj, ct))
                 {
                     throw new InvalidOperationException("CNPJ already exists");
                 }
 
-                if (await _repository.CnhExistsAsync(courier.CnhNumber, ct))
+                if (await _repository.CnhExistsAsync(courierModel.CnhNumber, ct))
                 {
                     throw new InvalidOperationException("CNH already exists");
                 }
+
+                var courier = new Courier(
+                    courierModel.BirthDate, 
+                    courierModel.Name, 
+                    courierModel.CnhNumber, 
+                    courierModel.CnhType, 
+                    courierModel.Cnpj);
 
                 await _repository.AddAsync(courier, ct);
 

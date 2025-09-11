@@ -6,6 +6,8 @@ using Services.CourierService;
 using Services.MotorcycleService;
 using Services.ICourierService;
 using Services.IMotorcycleService;
+using Services.IRentalService;
+using Services.RentalService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,7 @@ builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 //SERVICES
 builder.Services.AddScoped<ICourierService, CourierService>();
 builder.Services.AddScoped<IMotorcycleService, MotorcycleService>();
+builder.Services.AddScoped<IRentalService, RentalService>();
 
 builder.Services.AddControllers();
 

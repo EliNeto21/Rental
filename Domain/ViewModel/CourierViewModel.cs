@@ -14,6 +14,5 @@ namespace Domain.ViewModel
         public string CnhNumber { get; set; }
         public string CnhType { get; set; }
         public string? CnhImageUrl { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

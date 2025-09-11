@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WsRental")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb0d6d2e2e9165901413efcace218ffd48bb3a14")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+233150b37b2a27455a4b108f9765c61914e98272")]
 [assembly: System.Reflection.AssemblyProductAttribute("WsRental")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WsRental")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

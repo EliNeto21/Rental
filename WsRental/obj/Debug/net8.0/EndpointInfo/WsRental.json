@@ -27,17 +27,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Courier"
+                "$ref": "#/components/schemas/CourierViewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Courier"
+                "$ref": "#/components/schemas/CourierViewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Courier"
+                "$ref": "#/components/schemas/CourierViewModel"
               }
             }
           }
@@ -282,17 +282,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Motorcycle"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Motorcycle"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Motorcycle"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               }
             }
@@ -316,33 +316,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/Rental/rental": {
-      "post": {
-        "tags": [
-          "Rental"
-        ],
-        "responses": {
-          "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/ObjectGenericResult"
                 }
               }
             }
@@ -350,7 +338,55 @@
         }
       }
     },
-    "/Rental/rental/{rentalId}": {
+    "/Rental": {
+      "post": {
+        "tags": [
+          "Rental"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RentalViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RentalViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RentalViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalViewModelGenericResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalViewModelGenericResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalViewModelGenericResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Rental/by-id/{rentalId}": {
       "get": {
         "tags": [
           "Rental"
@@ -372,17 +408,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/RentalGenericResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/RentalGenericResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Rental"
+                  "$ref": "#/components/schemas/RentalGenericResult"
                 }
               }
             }
@@ -390,7 +426,7 @@
         }
       }
     },
-    "/Rental/rental/{rentalId}/return": {
+    "/Rental/by-id/{rentalId}/return": {
       "put": {
         "tags": [
           "Rental"
@@ -408,7 +444,103 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectGenericResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectGenericResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectGenericResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Rental/{id}/return": {
+      "post": {
+        "tags": [
+          "Rental"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnRentalRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnRentalRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnRentalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRentalResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRentalResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRentalResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -416,51 +548,6 @@
   },
   "components": {
     "schemas": {
-      "Courier": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "cnpj": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "birthDate": {
-            "type": "string",
-            "format": "date",
-            "readOnly": true
-          },
-          "cnhNumber": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "cnhType": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "cnhImageUrl": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CourierViewModel": {
         "type": "object",
         "properties": {
@@ -487,10 +574,6 @@
           "cnhImageUrl": {
             "type": "string",
             "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -590,6 +673,33 @@
         },
         "additionalProperties": false
       },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
       "Rental": {
         "type": "object",
         "properties": {
@@ -599,34 +709,23 @@
           },
           "motorcycleId": {
             "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "motorcycle": {
-            "$ref": "#/components/schemas/Motorcycle"
+            "format": "uuid"
           },
           "courierId": {
             "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "courier": {
-            "$ref": "#/components/schemas/Courier"
+            "format": "uuid"
           },
           "planDays": {
             "type": "integer",
-            "format": "int32",
-            "readOnly": true
+            "format": "int32"
           },
           "dailyRate": {
             "type": "number",
-            "format": "double",
-            "readOnly": true
+            "format": "double"
           },
           "startDate": {
             "type": "string",
-            "format": "date",
-            "readOnly": true
+            "format": "date"
           },
           "expectedEndDate": {
             "type": "string",
@@ -648,6 +747,119 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalGenericResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Rental"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mensagens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalViewModel": {
+        "type": "object",
+        "properties": {
+          "courierId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "motorcycleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "expectedEndDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "planDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalViewModelGenericResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RentalViewModel"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mensagens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReturnRentalRequest": {
+        "type": "object",
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReturnRentalResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extraDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "penalty": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

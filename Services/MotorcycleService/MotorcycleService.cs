@@ -33,7 +33,7 @@ namespace Services.MotorcycleService
             }
             catch (Exception ex)
             {
-                return new GenericResult<Motorcycle>(400, "Dados inválidos", null);
+                return new GenericResult<Motorcycle>(400, "Invalid data", null);
             }
         }
 
@@ -45,10 +45,10 @@ namespace Services.MotorcycleService
 
                 if (result == null)
                 {
-                    throw new Exception("Nenhum registro encontrado");
+                    throw new Exception("No records found");
                 }
 
-                return new GenericResult<IReadOnlyList<Motorcycle>>(200, "", result);
+                return new GenericResult<IReadOnlyList<Motorcycle>>(200, "Record found successfully", result);
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace Services.MotorcycleService
 
                 if (result == null)
                 {
-                    throw new Exception("Nenhum registro encontrado");
+                    throw new Exception("No records found");
                 }
 
                 return new GenericResult<Motorcycle>(200, "", result);
@@ -75,26 +75,46 @@ namespace Services.MotorcycleService
             }
         }
 
-        public async Task UpdatePlateAsync(Guid id, string newPlate, CancellationToken ct)
+        public async Task<GenericResult<dynamic>> UpdatePlateAsync(Guid id, string newPlate, CancellationToken ct)
         {
-            newPlate = newPlate.Trim().ToUpperInvariant();
-
-            if (await _repository.PlateExistsAsync(newPlate, ct))
+            try
             {
-                throw new InvalidOperationException("Plate already exists");
+                newPlate = newPlate.Trim().ToUpperInvariant();
+
+                if (await _repository.PlateExistsAsync(newPlate, ct))
+                {
+                    throw new InvalidOperationException("Plate already exists");
+                }
+
+                await _repository.UpdatePlateAsync(id, newPlate, ct);
+
+                return new GenericResult<dynamic>(200, "Plate successfully updated", null);
             }
-                
-            await _repository.UpdatePlateAsync(id, newPlate, ct);
+            catch
+            {
+                return new GenericResult<dynamic>(400, "Invalid data", null);
+            }
         }
 
-        public async Task DeleteAsync(Guid id, CancellationToken ct)
+        public async Task<GenericResult<dynamic>> DeleteAsync(Guid id, CancellationToken ct)
         {
-            if (await _repository.HasAnyRentalAsync(id, ct)) 
+            try
             {
-                throw new InvalidOperationException("Motorcycle has rentals");
+                if (await _repository.HasAnyRentalAsync(id, ct))
+                {
+                    throw new InvalidOperationException("Motorcycle has rentals");
+                }
+
+                await _repository.DeleteAsync(id, ct);
+
+                return new GenericResult<dynamic>(200, "Motorcycle successfully deleted", null);
+            }
+            catch
+            {
+                return new GenericResult<dynamic>(400, "Invalid data", null);
             }
 
-            await _repository.DeleteAsync(id, ct);
+            
         }
     }
 }

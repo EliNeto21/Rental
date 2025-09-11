@@ -1,5 +1,4 @@
-﻿using System.Reflection.Emit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
 
 namespace Infra.Context
@@ -26,23 +25,13 @@ namespace Infra.Context
                 e.HasIndex(x => x.Cnpj).IsUnique();
                 e.HasIndex(x => x.CnhNumber).IsUnique();
                 e.Property(x => x.CnhType).HasMaxLength(3);
-                e.Property(x => x.BirthDate).HasConversion(
-                    v => v.ToDateTime(TimeOnly.MinValue),
-                    v => DateOnly.FromDateTime(v));
+                e.Property(x => x.BirthDate).HasColumnType("date");
             });
             b.Entity<Rental>(e => {
                 e.ToTable("rentals");
-                e.HasOne<Motorcycle>().WithMany().HasForeignKey(x => x.MotorcycleId);
-                e.HasOne<Courier>().WithMany().HasForeignKey(x => x.CourierId);
-                e.Property(x => x.StartDate).HasConversion(
-                    v => v.ToDateTime(TimeOnly.MinValue),
-                    v => DateOnly.FromDateTime(v));
-                e.Property(x => x.ExpectedEndDate).HasConversion(
-                    v => v.ToDateTime(TimeOnly.MinValue),
-                    v => DateOnly.FromDateTime(v));
-                e.Property(x => x.EndDate).HasConversion(
-                    v => v.HasValue ? v.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                    v => v.HasValue ? DateOnly.FromDateTime(v.Value) : (DateOnly?)null);
+                e.Property(x => x.StartDate).HasColumnType("date");
+                e.Property(x => x.ExpectedEndDate).HasColumnType("date");
+                e.Property(x => x.EndDate).HasColumnType("date");
             });
         }
     }
