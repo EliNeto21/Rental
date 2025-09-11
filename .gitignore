@@ -1,0 +1,16 @@
+# Visual Studio
+.vs/
+*.db
+*.dbcache
+*.bin
+
+# Copilot
+CopilotIndices/
+
+# Rider/VS Code (se usar)
+.idea/
+.vscode/
+
+# Build outputs
+bin/
+obj/

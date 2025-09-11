@@ -21,25 +21,26 @@ namespace Infra.Repositories
             return _db.Rentals.AnyAsync(r => r.MotorcycleId == motorcycleId, ct);
         }
 
-        public Task<bool> ExistsOverlappingAsync(
+        public async Task<bool> ExistsOverlappingAsync(
             Guid motorcycleId,
             DateOnly startDate,
             DateOnly expectedEndDate,
             CancellationToken ct)
         {
-            // Janela [StartDate, EndDate] sobrepõe se: r.Start <= expectedEnd && (r.End ?? r.ExpectedEnd) >= start
             var start = startDate.ToDateTime(TimeOnly.MinValue);
             var end = expectedEndDate.ToDateTime(TimeOnly.MinValue);
 
-            return _db.Rentals.AnyAsync(r =>
+            var result = _db.Rentals.Where(r => 
                 r.MotorcycleId == motorcycleId &&
-                // Considera locações ainda não finalizadas como até ExpectedEndDate
-                (r.EndDate == null
+                r.Status != "Closed" &&
+                (r.EndDate == null 
                     ? r.StartDate.ToDateTime(TimeOnly.MinValue) <= end &&
                       r.ExpectedEndDate.ToDateTime(TimeOnly.MinValue) >= start
                     : r.StartDate.ToDateTime(TimeOnly.MinValue) <= end &&
-                      r.EndDate.Value.ToDateTime(TimeOnly.MinValue) >= start),
-                ct);
+                      r.EndDate.Value.ToDateTime(TimeOnly.MinValue) >= start)
+                ).FirstOrDefault();
+
+            return (result != null);
         }
 
         public Task<Rental?> GetByIdAsync(Guid id, CancellationToken ct)

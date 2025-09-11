@@ -20,10 +20,8 @@ namespace Infra.Contracts
             DateOnly expectedEndDate,
             CancellationToken ct);
 
-        // opcional: não permitir múltiplas locações ativas do mesmo entregador
         Task<bool> HasActiveRentalForCourierAsync(Guid courierId, CancellationToken ct);
 
-        // usado no delete da moto, se optarmos por bloquear qualquer histórico
         Task<bool> AnyByMotorcycleAsync(Guid motorcycleId, CancellationToken ct);
     }
 }

@@ -46,11 +46,11 @@ namespace WsRental.Controllers.v1
             return Ok(result);
         }
 
-        [HttpPut("by-id/{rentalId}/return")]
+        [HttpPut("by-id/{id:guid}/return")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenericResult<dynamic>>> ReturnRentalAsync([FromRoute] Guid rentalId)
+        public async Task<ActionResult<GenericResult<dynamic>>> ReturnRentalAsync([FromRoute] Guid id)
         {
-            var result = await _rentalService.ReturnRentalAsync(rentalId, DateOnly.FromDateTime(DateTime.Now), CancellationToken.None);
+            var result = await _rentalService.ReturnRentalAsync(id, DateOnly.FromDateTime(DateTime.Now), CancellationToken.None);
 
             if (result.Code > 200)
             {
@@ -58,28 +58,6 @@ namespace WsRental.Controllers.v1
             }
 
             return Ok(result);
-        }
-
-        [HttpPost("{id:guid}/return")]
-        [ProducesResponseType(typeof(ReturnRentalResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ReturnRental(Guid id, [FromBody] ReturnRentalRequest req, CancellationToken ct)
-        {
-            try
-            {
-                var result = await _rentalService.ReturnRentalAsync(id, req.EndDate, ct);
-
-                if (result.Code > 200)
-                {
-                    return BadRequest(result.Mensagem);
-                }
-
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Rental not found" });
-            }
         }
     }
 }
