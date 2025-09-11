@@ -41,8 +41,9 @@ namespace Infra.Repositories
             return _db.Couriers.FirstOrDefaultAsync(x => x.Id == id, ct);
         }
 
-        public Task SaveAsync(CancellationToken ct)
+        public Task SaveAsync(Courier entity, CancellationToken ct)
         {
+            _db.Couriers.Update(entity);
             return _db.SaveChangesAsync(ct);
         }
     }

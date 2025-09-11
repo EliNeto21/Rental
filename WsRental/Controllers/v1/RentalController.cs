@@ -20,7 +20,7 @@ namespace WsRental.Controllers.v1
 
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenericResult<RentalViewModel>>> InsertRentalAsync([FromBody] RentalViewModel rentalViewModel )
+        public async Task<ActionResult<GenericResult<Rental>>> InsertRentalAsync([FromBody] RentalViewModel rentalViewModel )
         {
             var result = await _rentalService.CreateAsync(rentalViewModel, CancellationToken.None);
 

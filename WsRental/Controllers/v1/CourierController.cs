@@ -33,13 +33,18 @@ namespace WsRental.Controllers.v1
             return Ok(result);
         }
 
-        [HttpPost("{courierId}/cnh-image")]
+        [HttpPost("{courierId:guid}/cnh-image")]
         [AllowAnonymous]
-        public async Task<ActionResult<GenericResult<dynamic>>> InsertCnhImageAsync([FromRoute] Guid courierId, IFormFile file)
+        public async Task<ActionResult<GenericResult<Courier>>> InsertCnhImageAsync([FromRoute] Guid courierId, IFormFile file)
         {
             var result = await _courierService.UpdateCnhImageAsync(courierId, file.OpenReadStream(), file.ContentType, CancellationToken.None);
 
-            return Ok();
+            if (result.Code > 200)
+            {
+                return BadRequest(result.Mensagem);
+            }
+
+            return Ok(result);
         }
     }
 }

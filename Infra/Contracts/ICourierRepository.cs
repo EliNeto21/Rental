@@ -12,6 +12,6 @@ namespace Infra.Contracts
         Task<Courier?> GetByCnpjAsync(string cnpj, CancellationToken ct);
         Task<Courier?> GetByCnhAsync(string cnhNumber, CancellationToken ct);
 
-        Task SaveAsync(CancellationToken ct);
+        Task SaveAsync(Courier entity, CancellationToken ct);
     }
 }

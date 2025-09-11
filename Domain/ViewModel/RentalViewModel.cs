@@ -8,6 +8,7 @@ namespace Domain.ViewModel
 {
     public class RentalViewModel
     {
+        public Guid Id { get; private set; }
         public Guid CourierId { get; set; }
         public Guid MotorcycleId { get; set; }
         public DateOnly StartDate { get; set; }

@@ -26,15 +26,30 @@ namespace Services.RentalService
             _motorcycle = motos; 
         }
 
-        public async Task<GenericResult<RentalViewModel>> CreateAsync(RentalViewModel rentalViewModel, CancellationToken ct)
+        public async Task<GenericResult<Rental>> CreateAsync(RentalViewModel rentalViewModel, CancellationToken ct)
         {
             try
             {
+                if (rentalViewModel.StartDate.AddDays(1) < DateOnly.FromDateTime(DateTime.Now))
+                {
+                    throw new Exception("The start date cannot be in the past.");
+                }
+
+                if (rentalViewModel.PlanDays is not (7 or 15 or 30 or 45 or 50))
+                {
+                    throw new Exception("Invalid rental plan. Allowed values: 7, 15, 30, 45, 50");
+                }
+
                 var courier = await _couriers.GetByIdAsync(rentalViewModel.CourierId, ct);
 
                 if (courier == null)
                 {
                     throw new Exception("Courier not found");
+                }
+
+                if (courier.CnhImageUrl == null)
+                {
+                    throw new Exception("Courier CNH image not uploaded");
                 }
 
                 if (!courier.CanRentMotorcycle())
@@ -60,22 +75,19 @@ namespace Services.RentalService
                 }
 
                 var rental = new Rental(rentalViewModel.MotorcycleId, rentalViewModel.CourierId, rentalViewModel.PlanDays, 0, startDate);
+
+                if (rental.DailyRate <= 0)
+                {
+                    throw new ArgumentException("Daily rate must be greater than zero");
+                }
+
                 await _repository.AddAsync(rental, ct);
 
-                var rentalView = new RentalViewModel
-                {
-                    MotorcycleId = rental.MotorcycleId,
-                    CourierId = rental.CourierId,
-                    PlanDays = rental.PlanDays,
-                    StartDate = rental.StartDate,
-                    ExpectedEndDate = rental.ExpectedEndDate
-                };
-
-                return new GenericResult<RentalViewModel>(200, "Rental completed successfully", rentalView);
+                return new GenericResult<Rental>(200, "Rental completed successfully", rental);
             }
-            catch
+            catch (Exception ex)
             {
-                return new GenericResult<RentalViewModel>(400, "Invalid data", null);
+                return new GenericResult<Rental>(400, ex.Message, null);
             }
         }
 
@@ -94,7 +106,7 @@ namespace Services.RentalService
             }
             catch (Exception ex)
             {
-                return new GenericResult<Rental>(400, "Invalid data", null);
+                return new GenericResult<Rental>(400, ex.Message, null);
             }
         }
 
@@ -106,7 +118,17 @@ namespace Services.RentalService
 
                 if (rental == null)
                 {
-                    throw new KeyNotFoundException("Rental not found");
+                    throw new Exception("Rental not found");
+                }
+
+                if (endDate < rental.StartDate)
+                {
+                    throw new Exception("End date cannot be before start date");
+                }
+
+                if (rental.Status == "Closed")
+                {
+                    throw new Exception("Rental is closed");
                 }
 
                 var result = rental.Close(endDate);
@@ -115,9 +137,9 @@ namespace Services.RentalService
 
                 return new GenericResult<ReturnRentalResponse>(200, "Success", result);
             }
-            catch
+            catch (Exception ex)
             {
-                return new GenericResult<ReturnRentalResponse>(400, "Invalid data", null);
+                return new GenericResult<ReturnRentalResponse>(400, ex.Message, null);
             }
         }
     }

@@ -18,7 +18,7 @@
             CourierId = courierId;
             PlanDays = planDays; 
             DailyRate = dailyRate;
-            StartDate = startDate.AddDays(1);
+            StartDate = startDate;
             ExpectedEndDate = StartDate.AddDays(planDays);
         }
 
