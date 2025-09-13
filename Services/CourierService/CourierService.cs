@@ -61,7 +61,7 @@ namespace Services.CourierService
                 }
 
                 //var url = await _storage.UploadAsync(courierId, file, contentType, ct);
-                //courier.SetCnhImage(url);
+                courier.SetCnhImage("url");
                 await _repository.SaveAsync(courier, ct);
 
                 return new GenericResult<Courier>(200, "", courier);

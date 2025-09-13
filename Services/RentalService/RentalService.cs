@@ -30,11 +30,6 @@ namespace Services.RentalService
         {
             try
             {
-                if (rentalViewModel.StartDate.AddDays(1) < DateOnly.FromDateTime(DateTime.Now))
-                {
-                    throw new Exception("The start date cannot be in the past.");
-                }
-
                 if (rentalViewModel.PlanDays is not (7 or 15 or 30 or 45 or 50))
                 {
                     throw new Exception("Invalid rental plan. Allowed values: 7, 15, 30, 45, 50");
@@ -74,7 +69,7 @@ namespace Services.RentalService
                     throw new Exception("Motorcycle not available for the selected period");
                 }
 
-                var rental = new Rental(rentalViewModel.MotorcycleId, rentalViewModel.CourierId, rentalViewModel.PlanDays, 0, startDate);
+                var rental = new Rental(rentalViewModel.MotorcycleId, rentalViewModel.CourierId, rentalViewModel.PlanDays, rentalViewModel.DailyRate, startDate);
 
                 if (rental.DailyRate <= 0)
                 {

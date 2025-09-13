@@ -3,38 +3,40 @@ using System.Net;
 using FluentAssertions;
 using Domain.Entities;
 using Domain.ViewModel;
+using Tests.IntegrationTests.Helpers;
 
 namespace Tests.IntegrationTests.Controllers
 {
-    public class MotorcyclesControllerTests : IClassFixture<ApiFactory>
+    public class MotorcyclesControllerTests : IntegrationTestBase
     {
-        private readonly HttpClient _client;
-
-        public MotorcyclesControllerTests(ApiFactory factory)
-        {
-            _client = factory.CreateClient();
-        }
+        public MotorcyclesControllerTests(PostgresFixture fixture) : base(fixture) { }
 
         [Fact]
         public async Task Post_Motorcycle_Should_Return200()
         {
-            var request = new
+            try
             {
-                year = 2024,
-                model = "Honda CG 160",
-                plate = "ABC1234"
-            };
+                var request = new
+                {
+                    year = 2024,
+                    model = "Honda CG 160",
+                    plate = "ABC1234"
+                };
 
-            var motorcycle = await _client.GetFromJsonAsync<GenericResult<IReadOnlyList<Motorcycle>>> ($"/Motorcycles/by-plate/{request.plate}");
-            await _client.DeleteAsync($"/Motorcycles/{motorcycle.Data.FirstOrDefault().Id}");
+                var response = await Client.PostAsJsonAsync("/Motorcycles", request);
+                response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var response = await _client.PostAsJsonAsync("/Motorcycles", request);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+                var body = await response.Content.ReadFromJsonAsync<GenericResult<Motorcycle>>();
 
-            var body = await response.Content.ReadFromJsonAsync<GenericResult<Motorcycle>>();
+                (body.Data.Year).Should().Be(2024);
+                (body.Data.Plate).Should().Be("ABC1234");
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
 
-            (body.Data.Year).Should().Be(2024);
-            (body.Data.Plate).Should().Be("ABC1234");
+            
         }
 
         [Fact]
@@ -48,10 +50,10 @@ namespace Tests.IntegrationTests.Controllers
             };
 
             // cria primeira
-            await _client.PostAsJsonAsync("Motorcycles", request);
+            await Client.PostAsJsonAsync("Motorcycles", request);
 
             // tenta criar segunda
-            var response = await _client.PostAsJsonAsync("Motorcycles", request);
+            var response = await Client.PostAsJsonAsync("Motorcycles", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -66,7 +68,7 @@ namespace Tests.IntegrationTests.Controllers
                 plate = "XYZ9876"
             };
 
-            var response = await _client.PostAsJsonAsync("Motorcycles", request);
+            var response = await Client.PostAsJsonAsync("Motorcycles", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }

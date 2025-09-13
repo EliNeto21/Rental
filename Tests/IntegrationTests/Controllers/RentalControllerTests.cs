@@ -8,17 +8,14 @@ using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.ViewModel;
 using FluentAssertions;
+using Tests.IntegrationTests.Helpers;
+using FluentAssertions.Extensions;
 
 namespace Tests.IntegrationTests.Controllers
 {
-    public class RentalControllerTests : IClassFixture<ApiFactory>
+    public class RentalControllerTests : IntegrationTestBase
     {
-        private readonly HttpClient _client;
-
-        public RentalControllerTests(ApiFactory factory)
-        {
-            _client = factory.CreateClient();
-        }
+        public RentalControllerTests(PostgresFixture fixture) : base(fixture) { }
 
         [Fact]
         public async Task Post_Rental_Return_BeforeExpected_Should_ApplyPenalty()
@@ -33,7 +30,7 @@ namespace Tests.IntegrationTests.Controllers
                 cnhType = "A" 
             };
 
-            var cResp = await _client.PostAsJsonAsync("Courier", courier);
+            var cResp = await Client.PostAsJsonAsync("Courier", courier);
             var courierResponse = await cResp.Content.ReadFromJsonAsync<GenericResult<Courier>>();
 
             var motorcycle = new 
@@ -43,21 +40,28 @@ namespace Tests.IntegrationTests.Controllers
                 plate = "ZZZ9977" 
             };
 
-            var mResp = await _client.PostAsJsonAsync("Motorcycles", motorcycle);
+            var content = new MultipartFormDataContent();
+            var fileContent = new ByteArrayContent(new byte[] { 65, 66, 67 });
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+            content.Add(fileContent, "file", "cnh.txt");
+
+            var response = await Client.PostAsync($"Courier/{courierResponse?.Data.Id}/cnh-image", content);
+
+            var mResp = await Client.PostAsJsonAsync("Motorcycles", motorcycle);
             var motoResponse = await mResp.Content.ReadFromJsonAsync<GenericResult<Motorcycle>>();
 
             var rentalReq = new 
             {
-                courierId = courierResponse.Data.Id, 
-                motorcycleId = motoResponse.Data.Id,
-                startDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                courierId = courierResponse?.Data.Id, 
+                motorcycleId = motoResponse?.Data.Id,
+                startDate = DateOnly.FromDateTime(Convert.ToDateTime("05/09/2025").AsUtc()),
                 endDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                 expectedEndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
-                planDays = 7, 
+                planDays = 7,
                 dailyRate = 30 
             };
 
-            var rResp = await _client.PostAsJsonAsync("Rental", rentalReq);
+            var rResp = await Client.PostAsJsonAsync("Rental", rentalReq);
             var rentalResponse = await rResp.Content.ReadFromJsonAsync<GenericResult<Rental>>();
 
             // act -> devolve antes da data prevista
@@ -66,8 +70,10 @@ namespace Tests.IntegrationTests.Controllers
                 endDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)) 
             };
 
-            var resp = await _client.PutAsJsonAsync($"Rental/by-id/{rentalResponse.Data.Id}/return", returnReq);
+            var resp = await Client.PutAsJsonAsync($"Rental/by-id/{rentalResponse?.Data.Id}/return", returnReq);
             resp.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            await Client.DeleteAsync($"/Motorcycles/{motoResponse?.Data.Id}");
         }
     }
 }

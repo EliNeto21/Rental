@@ -15,6 +15,6 @@ namespace Domain.ViewModel
         public DateOnly? EndDate { get; set; }
         public DateOnly ExpectedEndDate { get; set; }
         public int PlanDays { get; set; }
-
+        public decimal DailyRate { get; set; }
     }
 }

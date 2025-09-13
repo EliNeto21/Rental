@@ -20,7 +20,7 @@ namespace Services.MotorcycleService
             {
                 if (await _repository.PlateExistsAsync(motorcycleViewModel.Plate.Trim().ToUpperInvariant(), ct))
                 {
-                    throw new InvalidOperationException("Plate already exists");
+                    throw new Exception("Plate already exists");
                 }
 
                 var motorcycle = new Motorcycle(motorcycleViewModel.Year, motorcycleViewModel.Model, motorcycleViewModel.Plate);
@@ -33,7 +33,7 @@ namespace Services.MotorcycleService
             }
             catch (Exception ex)
             {
-                return new GenericResult<Motorcycle>(400, "Invalid data", null);
+                return new GenericResult<Motorcycle>(400, ex.Message, null);
             }
         }
 

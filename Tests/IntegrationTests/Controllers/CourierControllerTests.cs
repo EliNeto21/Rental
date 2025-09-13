@@ -3,17 +3,13 @@ using System.Net.Http.Json;
 using Domain.Entities;
 using Domain.ViewModel;
 using FluentAssertions;
+using Tests.IntegrationTests.Helpers;
 
 namespace Tests.IntegrationTests.Controllers
 {
-    public class CourierControllerTests : IClassFixture<ApiFactory>
+    public class CourierControllerTests : IntegrationTestBase
     {
-        private readonly HttpClient _client;
-
-        public CourierControllerTests(ApiFactory factory)
-        {
-            _client = factory.CreateClient();
-        }
+        public CourierControllerTests(PostgresFixture fixture) : base(fixture) { }
 
         [Fact]
         public async Task Post_Courier_Should_Return200()
@@ -27,7 +23,7 @@ namespace Tests.IntegrationTests.Controllers
                 cnhType = "A"
             };
 
-            var response = await _client.PostAsJsonAsync("/Courier", request);
+            var response = await Client.PostAsJsonAsync("/Courier", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -45,10 +41,10 @@ namespace Tests.IntegrationTests.Controllers
             };
 
             // cria o primeiro
-            await _client.PostAsJsonAsync("Courier", request);
+            await Client.PostAsJsonAsync("Courier", request);
 
             // tenta criar duplicado
-            var response = await _client.PostAsJsonAsync("Courier", request);
+            var response = await Client.PostAsJsonAsync("Courier", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -74,8 +70,8 @@ namespace Tests.IntegrationTests.Controllers
                 cnhType = "A"
             };
 
-            await _client.PostAsJsonAsync("Courier", courier1);
-            var response = await _client.PostAsJsonAsync("Courier", courier2);
+            await Client.PostAsJsonAsync("Courier", courier1);
+            var response = await Client.PostAsJsonAsync("Courier", courier2);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
