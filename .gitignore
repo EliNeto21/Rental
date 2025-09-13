@@ -1,16 +1,35 @@
-# Visual Studio
+# IDE
 .vs/
-*.db
-*.dbcache
-*.bin
-
-# Copilot
-CopilotIndices/
-
-# Rider/VS Code (se usar)
-.idea/
 .vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Build outputs
-bin/
-obj/
+# Build / Output (todos os projetos)
+**/bin/
+**/obj/
+out/
+
+# Caches e DBs locais
+*.db
+*.db-wal
+*.db-shm
+*.dbcache
+*.opendb
+*.futdcache*
+*.cache
+*.log
+
+# GitHub Copilot indices (se aparecerem fora de .vs)
+**/CopilotIndices/
+
+# JetBrains Rider
+.idea/
+*.DotSettings.user
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
