@@ -18,7 +18,7 @@ API para gerenciamento de **aluguel de motos e entregadores**, com suporte a men
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e rodando.
 - .NET SDK 8+ instalado.
-- Opcional: [pgAdmin](https://www.pgadmin.org/).
+- [pgAdmin](https://www.pgadmin.org/).
 
 ---
 
@@ -77,11 +77,11 @@ Essa abordagem garante:
  - Escalabilidade
 
 ## 📂 Estrutura do Projeto
-/Domain                 -> Entidades de negócio
-/Infrastructure         -> DbContext, Repositórios, Migrations
-/Services               -> Regras de negócio, Mensageria (Publisher/Consumer)
-/WsRental               -> API (Controllers, Program.cs)
-/Tests                  -> Testes unitários e de integração (xUnit + Testcontainers)
+ - /Domain                 -> Entidades de negócio
+ - /Infrastructure         -> DbContext, Repositórios, Migrations
+ - /Services               -> Regras de negócio, Mensageria (Publisher/Consumer)
+ - /WsRental               -> API (Controllers, Program.cs)
+ - /Tests                  -> Testes unitários e de integração (xUnit + Testcontainers)
 
 ## Diferenciais 🚀
 - Testes unitários
