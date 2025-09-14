@@ -8,6 +8,9 @@ using Services.ICourierService;
 using Services.IMotorcycleService;
 using Services.IRentalService;
 using Services.RentalService;
+using Services.IMessaging;
+using Services.Messaging;
+using Services.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +35,13 @@ builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 builder.Services.AddScoped<ICourierService, CourierService>();
 builder.Services.AddScoped<IMotorcycleService, MotorcycleService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
+builder.Services.AddScoped<IRabbitMqProducer, RabbitMqProducer>();
+
+//CONSUMERS
+builder.Services.AddHostedService<MotorcycleConsumerHostedService>();
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -49,6 +54,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
@@ -62,13 +68,9 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseSwaggerUI();
-
-
-app.MapControllers();
 app.Run();
-
 
 public partial class Program { }

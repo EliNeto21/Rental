@@ -1,18 +1,22 @@
 ﻿using Domain.ViewModel;
 using Domain.Entities;
 using Infra.Contracts;
+using Services.IMessaging;
 
 namespace Services.MotorcycleService
 {
     public class MotorcycleService : IMotorcycleService.IMotorcycleService
     {
+        private readonly IRabbitMqProducer _producer;
         private readonly IMotorcycleRepository _repository;
 
         public MotorcycleService(
-                IMotorcycleRepository repo) 
+                IMotorcycleRepository repo,
+                IRabbitMqProducer producer) 
         {
+            _producer = producer;
             _repository = repo; 
-        }
+        }   
 
         public async Task<GenericResult<Motorcycle>> CreateAsync(MotorcycleViewModel motorcycleViewModel, CancellationToken ct)
         {
@@ -26,8 +30,7 @@ namespace Services.MotorcycleService
                 var motorcycle = new Motorcycle(motorcycleViewModel.Year, motorcycleViewModel.Model, motorcycleViewModel.Plate);
                 await _repository.AddAsync(motorcycle, ct);
 
-                //var @event = new MotorcycleRegisteredEvent(m.Id, m.Year, m.Model, m.Plate, m.CreatedAt);
-                //await _bus.PublishAsync("rental.events", "motorcycle.registered", @event, ct);
+                await _producer.PublishAsync("rental.events", "motorcycle.registered");
 
                 return new GenericResult<Motorcycle>(200, "", motorcycle);
             }
