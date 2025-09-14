@@ -29,6 +29,7 @@ O projeto inclui um `docker-compose.yml` na raiz para orquestrar os serviços ne
 ### Subir containers:
 ```bash
 docker-compose up -d
+```
 
 ## Aplicar migrations
 dotnet ef database update -p Infra -s WsRental
